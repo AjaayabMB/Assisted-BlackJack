@@ -209,9 +209,9 @@ while len(deck) >= 75:
     sp_hit, loop = "", ""
     # Cash reset:
     # total_money = reset_cash()
-    total_money=[0,0,0]
+    total_money = [0, 0, 0]
     for i in range(0, 3):
-        total_money[i]=money_check_byt(i+1)
+        total_money[i] = money_check_byt(i + 1)
         player[i] = list(hit(2))
         p_score[i] = int(current_score(i))
         print("Player", i + 1, "You've been dealt:", player[i], "And your score is", p_score[i])
