@@ -35,10 +35,11 @@ def split_action(i, count):
         if player[i][0][1] == player[i][1][1] and player[i][0][1] != "A":
             print("Split!")
             split(i, count)
+            gm_act[i].append("SP")
             money_calc("bet", i)
             print("Your current hand has now become", player[i], "And score is", current_score(i))
             print("Your split hand is", splits[i][count], "And score is", split_score(i, count))
-            print("Your money after the split is:", money[i])
+            print("Your money after the split is:", total_money[i])
             count += 1
         elif (player[i][0][1] == "K" or player[i][0][1] == "Q" or player[i][0][1] == "J" or player[i][0][
             1] == "10") and (
@@ -46,11 +47,21 @@ def split_action(i, count):
             1] == "10"):
             print("Split!")
             split(i, count)
+            gm_act[i].append("SP")
             money_calc("bet", i)
             print("Your current hand has now become", player[i], "And score is", current_score(i))
             print("Your split hand is", splits[i][count], "And score is", split_score(i, count))
-            print("Your money after the split is:", money[i])
+            print("Your money after the split is:", total_money[i])
             count += 1
+        elif (player[i][0][1] == "A") and (player[i][0][1] == player[i][1][1]):
+            print("Split!")
+            split(i, count)
+            gm_act[i].append("SP")
+            money_calc("bet", i)
+            print("Your current hand has now become", player[i], "And score is", current_score(i))
+            print("Your split hand is", splits[i][count], "And score is", split_score(i, count))
+            print("Your money after the split is:", total_money[i])
+            count =3
         else:
             print("Cannot Split due to difference in number. Try Again.")
     else:
@@ -95,6 +106,7 @@ def split_score(i, count):
             ace += 1
         else:
             sp_s += int(i[1])
+    if ace !=0:
         for j in range(0, ace):
             if sp_s > 10:
                 sp_s += 1
@@ -192,6 +204,8 @@ def money_calc(op, i):
                 total_money[i] += pay
 
 
+# Cash reset:
+# total_money = reset_cash()
 shoe_no = shoe_check_byt()
 while len(deck) >= 75:
     hand, hand1, hand2, hand3, d_hand, split_1_1, split_1_2, split_1_3, split_2_1, split_2_2, split_2_3, split_3_1, split_3_2, split_3_3 = list(), list(), list(), list(), list(), list(), list(), list(), list(), list(), list(), list(), list(), list()
@@ -200,15 +214,14 @@ while len(deck) >= 75:
     player = [hand1, hand2, hand3]
     p_score = [score1, score2, score3]
     splits = [[split_1_1, split_1_2, split_1_3], [split_2_1, split_2_2, split_2_3], [split_3_1, split_3_2, split_3_3]]
+    sp_score=[[0,0,0], [0,0,0], [0,0,0]]
     gm_sts = [0, 0, 0]
-    gm_act = [[], [], []]
+    gm_act = [[],[],[]]
     # game_data = {}
     ds, p_number, = 0, 0
     a, lo, d_loop = 1, 1, 1
     total_bet, split_total_bet = [0, 0, 0], [0, 0, 0]
     sp_hit, loop = "", ""
-    # Cash reset:
-    # total_money = reset_cash()
     total_money = [0, 0, 0]
     for i in range(0, 3):
         total_money[i] = money_check_byt(i + 1)
@@ -232,6 +245,7 @@ while len(deck) >= 75:
         if (p_score[i]) == 21:
             print("Player", i + 1, "'s turn.")
             print("Player", i + 1, "your current hand is:", player[i], "score is:", current_score(i))
+            gm_act[i].append("BJ")
             print("BLACKAJACKKKKKK")
         else:
             while a != 0:
@@ -285,6 +299,7 @@ while len(deck) >= 75:
         if split_score(i, 0) != 0:
             for j in range(0, c):
                 b = 1
+                sp_score[i][j]=split_score(i, j)
                 while a != 0:
                     print("Your split hand no.", j + 1, "is", splits[i][j], "And score is", split_score(i, j))
                     if b == 1:
@@ -311,9 +326,12 @@ while len(deck) >= 75:
                         case "SP":
                             if "A" in splits[i][j]:
                                 split_one = hit_on_split(i, j)
+                                gm_act[i].append("H")
                                 print("Your current hand is", splits[i][j], "And score is", split_score(i, j))
                                 print("Maximum number of hits for aces reached.")
                                 break
+                            else:
+                                c=split_action(i, count)
                         case "D":
                             if b != 1:
                                 print("Doubling after hitting not allowed.")
@@ -365,6 +383,7 @@ while len(deck) >= 75:
             if current_score(i) == 21 and len(player[i]) == 2:
                 pay = total_bet[i] + 1.5 * total_bet[i]
                 money_calc("pay", i)
+                gm_sts[i]=1
             elif current_score(i) < dealer_score(0) <= 21:
                 print("Dealer Wins. Player", i + 1, "loses.")
                 gm_sts[i] = -1
@@ -384,7 +403,8 @@ while len(deck) >= 75:
     for i in range(0, 3):
         print("Player", i + 1, "'s money now:", total_money[i])
         action = str(gm_act[i])
-        insert_it(shoe_no, round_no, i + 1, current_score(i), total_bet[i], total_money[i], dealer_score(0), action,
+        for j in sp_score[i]:
+            insert_it(shoe_no, round_no, i + 1, current_score(i),j, total_bet[i], total_money[i], dealer_score(0), action,
                   gm_sts[i])
     # Dictionary is useless
     # for i in range(0, 3):

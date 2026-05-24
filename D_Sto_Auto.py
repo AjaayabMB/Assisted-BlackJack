@@ -5,7 +5,7 @@ conn = sqlite3.connect('assistedblackjackdata.db')
 c = conn.cursor()
 
 
-def insert_it(shoe_id, round_id, player_id, player_score, bet_amount, total_money, dealer_score, game_action,
+def insert_it(shoe_id, round_id, player_id, player_score,split_score, bet_amount, total_money, dealer_score, game_action,
               game_status):
     c.execute("""
     INSERT INTO table_data
@@ -14,6 +14,7 @@ def insert_it(shoe_id, round_id, player_id, player_score, bet_amount, total_mone
     Round_ID,
     Player_ID,
     Player_Score,
+    Split_Score,
     Bet_Amount,
     Total_Money,
     Dealer_Score,
@@ -21,11 +22,12 @@ def insert_it(shoe_id, round_id, player_id, player_score, bet_amount, total_mone
     Game_Status
     )
     VALUES
-    (?,?,?,?,?,?,?,?,?)""",
+    (?,?,?,?,?,?,?,?,?,?)""",
               (shoe_id,
                round_id,
                player_id,
                player_score,
+               split_score,
                bet_amount,
                total_money,
                dealer_score,
@@ -65,6 +67,15 @@ def shoe_check_byt():
     return sh[0] + 1
 
 
+def data_extract_byt():
+    c.execute("SELECT * FROM table_data")
+    data = []
+    rows = c.fetchall()
+    for row in rows:
+        data.append(row)
+    return data
+
+
 c.execute("""
 CREATE TABLE IF NOT EXISTS table_data
     (
@@ -73,6 +84,7 @@ CREATE TABLE IF NOT EXISTS table_data
     Round_ID INTEGER NOT NULL,
     Player_ID INTEGER NOT NULL,
     Player_Score INTEGER NOT NULL CHECK(Player_Score >= 0),
+    Split_Score INTEGER NOT NULL,
     Bet_Amount INTEGER NOT NULL CHECK(Bet_Amount >= 0),
     Total_Money INTEGER NOT NULL,
     Dealer_Score INTEGER NOT NULL CHECK(Dealer_Score >= 0),
@@ -80,8 +92,8 @@ CREATE TABLE IF NOT EXISTS table_data
     Game_Status INTEGER NOT NULL CHECK(Game_Status IN (-1,0,1))
     )
 """)
-# CANNOT CHECK GAME ACTION FOR A VIABLE SOLUTION YET.
 
+# CANNOT CHECK GAME ACTION FOR A VIABLE SOLUTION YET.
 # Checking the function.
 # print(shoe_check_byt())
 # ___Hard Reset___:
