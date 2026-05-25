@@ -5,7 +5,8 @@ conn = sqlite3.connect('assistedblackjackdata.db')
 c = conn.cursor()
 
 
-def insert_it(shoe_id, round_id, player_id, player_score,split_score, bet_amount, total_money, dealer_score, game_action,
+def insert_it(shoe_id, round_id, player_id, player_score, split_score, bet_amount, total_money, dealer_score,
+              game_action,
               game_status):
     c.execute("""
     INSERT INTO table_data
