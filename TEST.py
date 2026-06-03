@@ -1,12 +1,12 @@
 from random import shuffle
 from itertools import product
-import sys
 from D_Sto_Auto import shoe_check_byt
 from D_Sto_Auto import insert_it
-from D_Sto_Auto import reset_cash
+# from D_Sto_Auto import reset_cash
 from D_Sto_Auto import money_check_byt
+from Da_Assistant import assist_cc_byt
 
-for loop in range(0,1000):
+for loop in range(0, 1):
     symbol = ["\u2663", "\u2665", "\u2666", "\u2660"]
     score = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
     deck = list()
@@ -120,7 +120,7 @@ for loop in range(0,1000):
         if lo != 0:
             for i in range(0, lo):
                 d_hand.append(deck.pop(0))
-            return d_hand
+        return d_hand
 
 
     def dealer_score(ds):
@@ -214,7 +214,8 @@ for loop in range(0,1000):
         round_no += 1
         player = [hand1, hand2, hand3]
         p_score = [score1, score2, score3]
-        splits = [[split_1_1, split_1_2, split_1_3], [split_2_1, split_2_2, split_2_3], [split_3_1, split_3_2, split_3_3]]
+        splits = [[split_1_1, split_1_2, split_1_3], [split_2_1, split_2_2, split_2_3],
+                  [split_3_1, split_3_2, split_3_3]]
         sp_score = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
         gm_sts = [0, 0, 0]
         gm_act = [[], [], []]
@@ -237,6 +238,7 @@ for loop in range(0,1000):
         for i in range(0, 3):
             c = count = 0
             b = 1
+            print("Your current money amount is:", total_money[i])
             # R.I.P HERE LIES THE CHOICE TO BET
             # print("How much would you like to bet?")
             # bet=input()
@@ -252,6 +254,7 @@ for loop in range(0,1000):
                 while a != 0:
                     print("Player", i + 1, "'s turn.")
                     print("Player", i + 1, "your current hand is:", player[i], "score is:", current_score(i))
+                    assist_cc_byt(deck, current_score(i))
                     if b == 1:
                         print("Player", i + 1, "What would you like to do?(H=Hit, S=Stand, Double=D, Split=SP)")
                     else:
@@ -408,13 +411,3 @@ for loop in range(0,1000):
                 insert_it(shoe_no, round_no, i + 1, current_score(i), j, total_bet[i], total_money[i], dealer_score(0),
                           action,
                           gm_sts[i])
-        # Dictionary is useless
-        # for i in range(0, 3):
-        #     game_data[f"Player_Score_{i + 1}"] = current_score(i)
-        #     game_data[f"Bet_Amount_{i + 1}"] = total_bet[i]
-        #     game_data[f"Total_Money_{i + 1}"] = total_money[i]
-        #     game_data[f"Game_Status_{i + 1}"] = gm_sts[i]
-        #     if len(gm_act[i]) != 0:
-        #         game_data[f"Game_Action_{i + 1}"] = gm_act[i]
-        #     else:
-        #         game_data[f"Game_Action_{i + 1}"] = "BJ"
