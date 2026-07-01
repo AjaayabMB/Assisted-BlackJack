@@ -5,7 +5,8 @@ conn = sqlite3.connect('assistedblackjackdata.db')
 c = conn.cursor()
 
 
-def insert_it(shoe_id, round_id, player_id, player_score, split_score, bet_amount, total_money, dealer_score,
+def insert_it(shoe_id, round_id, player_id, initial_player_hand, player_hand, player_score, bet_amount,
+              total_money, initial_dealer_hand, dealer_hand, dealer_score,
               game_action,
               game_status):
     c.execute("""
@@ -14,23 +15,29 @@ def insert_it(shoe_id, round_id, player_id, player_score, split_score, bet_amoun
     Shoe_ID,
     Round_ID,
     Player_ID,
+    Initial_Player_Hand,
+    Player_Hand,
     Player_Score,
-    Split_Score,
     Bet_Amount,
     Total_Money,
+    Initial_Dealer_Hand,
+    Dealer_Hand,
     Dealer_Score,
     Game_Action,
     Game_Status
     )
     VALUES
-    (?,?,?,?,?,?,?,?,?,?)""",
+    (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
               (shoe_id,
                round_id,
                player_id,
+               initial_player_hand,
+               player_hand,
                player_score,
-               split_score,
                bet_amount,
                total_money,
+               initial_dealer_hand,
+               dealer_hand,
                dealer_score,
                game_action,
                game_status
@@ -84,16 +91,18 @@ CREATE TABLE IF NOT EXISTS table_data
     Shoe_ID INTEGER NOT NULL,
     Round_ID INTEGER NOT NULL,
     Player_ID INTEGER NOT NULL,
+    Initial_Player_Hand TEXT NOT NULL,
+    Player_Hand TEXT NOT NULL,
     Player_Score INTEGER NOT NULL CHECK(Player_Score >= 0),
-    Split_Score INTEGER NOT NULL,
     Bet_Amount INTEGER NOT NULL CHECK(Bet_Amount >= 0),
     Total_Money INTEGER NOT NULL,
+    Initial_Dealer_Hand TEXT NOT NULL,
+    Dealer_Hand TEXT NOT NULL,
     Dealer_Score INTEGER NOT NULL CHECK(Dealer_Score >= 0),
     Game_Action TEXT NOT NULL,
     Game_Status INTEGER NOT NULL CHECK(Game_Status IN (-1,0,1))
     )
 """)
-
 # CANNOT CHECK GAME ACTION FOR A VIABLE SOLUTION YET.
 # Checking the function.
 # print(shoe_check_byt())

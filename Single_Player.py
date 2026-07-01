@@ -3,7 +3,10 @@ from itertools import product
 from D_Sto_Auto import shoe_check_byt
 from D_Sto_Auto import money_check_byt
 from Da_Assistant import assist_cc_byt
+from Da_Assistant import assist_inherit_byt
+from Monte_Carlo_Sim import simulation_mom
 
+Developer_Mode = False
 symbol = ["\u2663", "\u2665", "\u2666", "\u2660"]
 score = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 deck = list()
@@ -17,75 +20,75 @@ shuffle(deck)
 
 
 def hit(n):
-    for i in range(0, n):
+    for k in range(0, n):
         hand.append(deck.pop(0))
     return hand
 
 
-def split(i, count):
-    splits[i][count].append(player[i].pop(len(player[i]) - 1))
+def split(w, co):
+    splits[w][co].append(player[w].pop(len(player[w]) - 1))
     return splits
 
 
-def split_action(i, count):
-    a = 0
-    if count <= 3 and a != 1:
-        if player[i][0][1] == player[i][1][1] and player[i][0][1] != "A":
+def split_action(x, coun):
+    p = 0
+    if coun <= 3 and p != 1:
+        if player[x][0][1] == player[x][1][1] and player[x][0][1] != "A":
             print("Split!")
-            split(i, count)
-            gm_act[i].append("SP")
-            money_calc("bet", i)
-            print("Your current hand has now become", player[i], "And score is", current_score(i))
-            print("Your split hand is", splits[i][count], "And score is", split_score(i, count))
-            print("Your money after the split is:", total_money[i])
-            count += 1
-        elif (player[i][0][1] == "K" or player[i][0][1] == "Q" or player[i][0][1] == "J" or player[i][0][
+            split(x, coun)
+            gm_act[x].append("SP")
+            money_calc("bet", x)
+            print("Your current hand has now become", player[x], "And score is", current_score(x))
+            print("Your split hand is", splits[x][coun], "And score is", split_score(x, coun))
+            print("Your money after the split is:", total_money[x])
+            coun += 1
+        elif (player[x][0][1] == "K" or player[x][0][1] == "Q" or player[x][0][1] == "J" or player[x][0][
             1] == "10") and (
-                player[i][1][1] == "K" or player[i][1][1] == "Q" or player[i][1][1] == "J" or player[i][1][
+                player[x][1][1] == "K" or player[x][1][1] == "Q" or player[x][1][1] == "J" or player[x][1][
             1] == "10"):
             print("Split!")
-            split(i, count)
-            gm_act[i].append("SP")
-            money_calc("bet", i)
-            print("Your current hand has now become", player[i], "And score is", current_score(i))
-            print("Your split hand is", splits[i][count], "And score is", split_score(i, count))
-            print("Your money after the split is:", total_money[i])
-            count += 1
-        elif (player[i][0][1] == "A") and (player[i][0][1] == player[i][1][1]):
+            split(x, coun)
+            gm_act[x].append("SP")
+            money_calc("bet", x)
+            print("Your current hand has now become", player[x], "And score is", current_score(x))
+            print("Your split hand is", splits[x][coun], "And score is", split_score(x, coun))
+            print("Your money after the split is:", total_money[x])
+            coun += 1
+        elif (player[x][0][1] == "A") and (player[x][0][1] == player[x][1][1]):
             print("Split!")
-            split(i, count)
-            gm_act[i].append("SP")
-            money_calc("bet", i)
-            print("Your current hand has now become", player[i], "And score is", current_score(i))
-            print("Your split hand is", splits[i][count], "And score is", split_score(i, count))
-            print("Your money after the split is:", total_money[i])
-            count = 3
+            split(x, coun)
+            gm_act[x].append("SP")
+            money_calc("bet", x)
+            print("Your current hand has now become", player[x], "And score is", current_score(x))
+            print("Your split hand is", splits[x][coun], "And score is", split_score(x, coun))
+            print("Your money after the split is:", total_money[x])
+            coun = 3
         else:
             print("Cannot Split due to difference in number. Try Again.")
     else:
         print("Maximum number of splits is 3. Try Again.")
-    return count
+    return coun
 
 
-def hit_on_split(i, count):
-    splits[i][count].append(deck.pop(0))
-    return splits[i]
+def hit_on_split(q, co):
+    splits[q][co].append(deck.pop(0))
+    return splits[q]
 
 
-def current_score(p_number):
-    play = player[p_number]
+def current_score(p_num):
+    play = player[p_num]
     s = 0
     l = len(play)
     ace = 0
-    for i in range(0, l):
-        if play[i][1] == "J" or play[i][1] == "Q" or play[i][1] == "K":
+    for aa in range(0, l):
+        if play[aa][1] == "J" or play[aa][1] == "Q" or play[aa][1] == "K":
             s += 10
-        elif play[i][1] == "A":
+        elif play[aa][1] == "A":
             ace += 1
         else:
-            s += int(play[i][1])
+            s += int(play[aa][1])
     if ace != 0:
-        for j in range(0, ace):
+        for ab in range(0, ace):
             if s > 10:
                 s += 1
             else:
@@ -93,19 +96,19 @@ def current_score(p_number):
     return s
 
 
-def split_score(i, count):
-    s = splits[i][count]
+def split_score(ac, countt):
+    s = splits[ac][countt]
     sp_s = 0
     ace = 0
-    for i in s:
-        if i[1] == "J" or i[1] == "Q" or i[1] == "K":
+    for ac in s:
+        if ac[1] == "J" or ac[1] == "Q" or ac[1] == "K":
             sp_s += 10
-        elif i[1] == "A":
+        elif ac[1] == "A":
             ace += 1
         else:
-            sp_s += int(i[1])
+            sp_s += int(ac[1])
     if ace != 0:
-        for j in range(0, ace):
+        for ad in range(0, ace):
             if sp_s > 10:
                 sp_s += 1
             else:
@@ -113,93 +116,49 @@ def split_score(i, count):
     return sp_s
 
 
-def dealer(lo):
-    if lo != 0:
-        for i in range(0, lo):
+def dealer(ae):
+    if ae != 0:
+        for af in range(0, ae):
             d_hand.append(deck.pop(0))
     return d_hand
 
 
-def dealer_score(ds):
+def dealer_score(dss):
     ace = list()
-    for i in range(0, len(d_hand)):
-        if d_hand[i][1] == "J" or d_hand[i][1] == "Q" or d_hand[i][1] == "K":
-            ds += 10
-        elif d_hand[i][1] == "A":
-            ace.append(d_hand[i])
+    for ag in range(0, len(d_hand)):
+        if d_hand[ag][1] == "J" or d_hand[ag][1] == "Q" or d_hand[ag][1] == "K":
+            dss += 10
+        elif d_hand[ag][1] == "A":
+            ace.append(d_hand[ag])
         else:
-            ds += int(d_hand[i][1])
-    for i in range(0, len(ace)):
-        if ds > 10 and len(d_hand[i]) > 2:
-            ds += 1
+            dss += int(d_hand[ag][1])
+    for ag in range(0, len(ace)):
+        if dss > 10 and len(d_hand[ag]) > 2:
+            dss += 1
         else:
-            ds += 11
-    return ds
+            dss += 11
+    return dss
 
 
-def basic_strategy(i, sco, d_sco):
-    play = player[i]
-    for j in play:
-        if "A" not in play:
-            if sco > 17:
-                return "S"
-            elif 12 < sco < 17 and 1 < d_sco < 7:
-                return "S"
-            elif sco == 12 and 3 < d_sco < 7:
-                return "S"
-            elif ((sco == 11) or (sco == 10 and 1 < d_sco < 10) or (sco == 9 and 2 < d_sco < 7)) and len(play) < 3:
-                return "D"
-            else:
-                return "H"
-        else:
-            if sco > 19:
-                return "S"
-            elif sco == 18:
-                if 1 < d_sco < 9:
-                    return "S"
-                elif d_sco in [9, 10, 11]:
-                    return "H"
-            elif 12 < sco < 18:
-                return "H"
-            elif sco == 18 and 2 < d_sco < 7:
-                return "D"
-            elif ("7" in play and 2 < d_sco < 7) or ("6" in play and 2 < d_sco < 7) or (
-                    "5" in play and 3 < d_sco < 7) or ("4" in play and 3 < d_sco < 7) or (
-                    "3" in play and 4 < d_sco < 7) or ("2" in play and 4 < d_sco < 7):
-                return "D"
-        if play[0][1] == play[1][1]:
-            if sco == 20:
-                return "S"
-            elif play[0][1] == "5":
-                return "D"
-            elif (play[0][1] in ["A", "8"]) or (play[0][1] in ["2", "3"] and 1 < d_sco < 8) or (
-                    play[0][1] in ["6"] and 1 < d_sco < 7) or (play[0][1] in ["7"] and 1 < d_sco < 8) or (
-                    (play[0][1] in ["9"]) and (1 < d_sco < 7 or 7 < d_sco < 10)):
-                if d_sco in [7, 10, 11]:
-                    return "S"
-                else:
-                    return "SP"
-
-
-def money_calc(op, i):
-    if split_score(i, 0) == 0:
+def money_calc(op, ah):
+    if split_score(ah, 0) == 0:
         match op:
             case "bet":
-                print(f"Player {i + 1} has bet", bet)
-                total_bet[i] += bet
-                total_money[i] -= bet
+                print(f"Player {ah + 1} has bet", bet)
+                total_bet[ah] += bet
+                total_money[ah] -= bet
             case "pay":
-                print(f"Player {i + 1} has been paid", pay)
-                total_money[i] += pay
+                print(f"Player {ah + 1} has been paid", pay)
+                total_money[ah] += pay
     else:
         match op:
             case "bet":
                 print("You have bet", bet)
-                split_total_bet[i] += bet
-                total_money[i] -= bet
+                split_total_bet[ah] += bet
+                total_money[ah] -= bet
             case "pay":
                 print("You have been paid", pay)
-                total_money[i] += pay
+                total_money[ah] += pay
 
 
 shoe_no = shoe_check_byt()
@@ -215,31 +174,28 @@ while len(deck) >= 75:
     gm_sts = [0, 0, 0]
     gm_act = [[], [], []]
     ds, p_number, = 0, 0
-    a, lo, d_loop = 1, 1, 1
+    a, lo, d_loop = 1, 1, 11
     total_bet, split_total_bet = [0, 0, 0], [0, 0, 0]
     sp_hit, loop = "", ""
     total_money = [0, 0, 0]
-    for i in range(0, 3):
-        total_money[i] = money_check_byt(i + 1)
-        player[i] = list(hit(2))
-        p_score[i] = int(current_score(i))
-        print("Player", i + 1, "You've been dealt:", player[i], "And your score is", p_score[i])
-        hand.clear()
-    total_money[0] = 2000
+    if Developer_Mode:
+        player[0] = [('♠', '5'), ('♥', '6')]
+        # d_hand = [('♦', '6')]
+        total_money[0] = 2000
+    else:
+        for i in range(0, 3):
+            total_money[i] = money_check_byt(i + 1)
+            player[i] = list(hit(2))
+            p_score[i] = int(current_score(i))
+            print("Player", i + 1, "You've been dealt:", player[i], "And your score is", p_score[i])
+            hand.clear()
     print("The dealer's cards:", dealer(1), "And score is:", dealer_score(0))
-
-    # Player moves:
     for i in range(0, 3):
         c = count = 0
         b = 1
-        print("Your current money amount is:", total_money[i])
-        if i == 0:
-            print("How much would you like to bet?")
-            bet = int(input())
-        else:
-            bet = 100
+        bet = int(input("How much would you like to bet? "))
         money_calc("bet", i)
-        if (p_score[i]) == 21:
+        if (p_score[i]) == 22:
             print("Player", i + 1, "'s turn.")
             print("Player", i + 1, "your current hand is:", player[i], "score is:", current_score(i))
             gm_act[i].append("BJ")
@@ -248,15 +204,14 @@ while len(deck) >= 75:
             while a != 0:
                 print("Player", i + 1, "'s turn.")
                 print("Player", i + 1, "your current hand is:", player[i], "score is:", current_score(i))
-                assist_cc_byt(deck, current_score(i))
                 if b == 1:
                     print("Player", i + 1, "What would you like to do?(H=Hit, S=Stand, Double=D, Split=SP)")
                 else:
                     print("Would you like to hit again, stand or split?(Hit=H,Stand=S,Split=SP)")
-                if i == 0:
-                    choice = input()
-                else:
-                    choice = basic_strategy(i, current_score(i), dealer_score(0))
+                assist_cc_byt(deck, current_score(i))
+                assist_inherit_byt(player[i], dealer(0))
+                simulation_mom(deck, player[i], dealer(0))
+                choice = input()
                 match choice.upper():
                     case "H":
                         b += 1
@@ -337,15 +292,16 @@ while len(deck) >= 75:
                             else:
                                 print("Double!")
                                 gm_act[i].append("D")
+                                # noinspection PyUnboundLocalVariable
                                 print("Bet doubled to", 2 * bet)
-                                bet = 100
+                                bet = 2 * bet
                                 money_calc("bet", i)
                                 split_one = hit_on_split(j, count)
                                 print("Your split hand no.", j + 1, "is", splits[i][j], "And score is",
                                       split_score(i, j))
                                 break
     print("The dealer's cards:", d_hand, "And score is:", dealer_score(0))
-    while dealer_score(0) <= 17:
+    while dealer_score(0) < 17:
         h = 0
         for i in range(0, len(d_hand)):
             if d_hand[i][1] != "A" and dealer_score(0) < 17:

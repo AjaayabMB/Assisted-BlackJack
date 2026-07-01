@@ -1,10 +1,3 @@
-# import numpy as np
-# import pandas as pd
-# import matplotlib.pyplot as plt
-# from sklearn.model_selection import train_test_split
-# from sklearn.linear_model import LinearRegression
-# from sklearn.metrics import mean_absolute_error, r2_score
-# from Monte_Carlo_Sim import cum_win_rate_byt
 from D_Sto_Auto import data_extract_byt
 
 sorting_order = {
@@ -26,26 +19,36 @@ sorting_order = {
 
 def player_data_byt():
     data = data_extract_byt()
-    player_score = []
-    split_score = []
-    dealer_score = []
-    game_action = []
-    game_status = []
+    initial_player_data = []
+    player_hand_data = []
+    player_score_data = []
+    initial_dealer_data = []
+    dealer_hand_data = []
+    dealer_score_data = []
+    game_action_data = []
+    game_status_data = []
     for i in data:
         b = 0
         for j in i:
             match b:
                 case 4:
-                    player_score.append(j)
+                    initial_player_data.append(j)
                 case 5:
-                    split_score.append(j)
-                case 8:
-                    dealer_score.append(j)
+                    player_hand_data.append(j)
+                case 6:
+                    player_score_data.append(j)
                 case 9:
-                    game_action.append(j)
+                    initial_dealer_data.append(j)
                 case 10:
-                    game_status.append(j)
+                    dealer_hand_data.append(j)
+                case 11:
+                    dealer_score_data.append(j)
+                case 12:
+                    game_action_data.append(j)
+                case 13:
+                    game_status_data.append(j)
             b += 1
+    return initial_player_data, player_hand_data, player_score_data, initial_dealer_data, dealer_hand_data, dealer_score_data, game_action_data, game_status_data
 
 
 def sorting_cards(input_cards):
@@ -56,7 +59,7 @@ def sorting_cards(input_cards):
 def assist_cc_byt(deck, pl_score):
     v_op = []
     v_sco = []
-    tot_perc=0.0
+    tot_perc = 0.0
     sorted_deck = sorting_cards(deck)
     for sd in range(0, len(sorted_deck)):
         sc_tbd, scor, ac = 0, 0, 0
@@ -83,7 +86,7 @@ def assist_cc_byt(deck, pl_score):
     v_sco_uni = set(v_sco)
     v_sco_li = list(v_sco_uni)
     v_sco_sorted = sorted(v_sco_li, key=lambda card: sorting_order[card])
-    print("The options are:", v_sco_sorted)
+    print("The valid options are:", v_sco_sorted)
     for v in v_sco_sorted:
         dup = 1
         for dec in range(0, len(deck)):
@@ -91,10 +94,41 @@ def assist_cc_byt(deck, pl_score):
                 dup += 1
         perc = dup / len(deck) * 100
         print(f"{v} can show up {perc:.2f}% of the time with the next hit.")
-        tot_perc+=perc
+        tot_perc += perc
     if tot_perc < 100:
+        if tot_perc >= 60:
+            print("You have a pretty good chance at winning this.")
+        else:
+            print("I'd recommend not hitting.")
         print(f"Successful hit chance is {tot_perc:.2f}% with the next hit.")
     else:
         print(f"You are guaranteed to not bust with the next hit.")
 
-# print(cum_win_rate_byt())
+
+def assist_inherit_byt(p_hand, d_hand):
+    iph_data, ph_data, ps_data, id_data, dh_data, ds_data, ga_data, gs_data = player_data_byt()
+    poss_mo = []
+    res_hand = []
+    res_d_hand = []
+    res_p_score = []
+    res_d_score = []
+    if len(p_hand) == 2:
+        for i in range(0, len(gs_data)):
+            if gs_data[i] == 1:
+                if iph_data[i] == str(p_hand) and id_data[i] == str(d_hand):
+                    poss_mo.append(ga_data[i])
+                    res_hand.append(ph_data[i])
+                    res_d_hand.append(dh_data[i])
+                    res_p_score.append(ps_data[i])
+                    res_d_score.append(ds_data[i])
+    if not poss_mo or not res_hand or not res_d_hand:
+        print("No results found.")
+    else:
+        print(len(poss_mo), "results found.")
+        print(
+            f"{"S.No.":<7} | {"Possible Moves":<20} | {"Result Hand in the instance":<53} | {"Resulting Player Score":<15} | {"Result Dealer Hand in the instance":<55} | {"Resulting Dealer Score":<15}")
+        for i in range(0, len(poss_mo)):
+            print(f"{"-" * 7} | {"-" * 20} | {"-" * 53} | {"-" * 22} | {"-" * 55} | {"-" * 22}")
+            print(
+                f"{i + 1:<7} | {poss_mo[i]:<20} | {res_hand[i]:<53} | {" ":<10} {res_p_score[i]:<12} | {res_d_hand[i]:<55} | {" ":<10} {res_d_score[i]:<12}")
+        print("-" * 195)
